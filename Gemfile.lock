@@ -58,6 +58,8 @@ GEM
       zeitwerk (~> 2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    auto_strip_attributes (2.5.0)
+      activerecord (>= 4.0)
     bindex (0.8.1)
     bootsnap (1.4.5)
       msgpack (~> 1.0)
@@ -166,15 +168,17 @@ GEM
     rspec-mocks (3.9.0)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
-    rspec-rails (3.9.0)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      railties (>= 3.0)
-      rspec-core (~> 3.9.0)
-      rspec-expectations (~> 3.9.0)
-      rspec-mocks (~> 3.9.0)
-      rspec-support (~> 3.9.0)
+    rspec-rails (4.0.0.beta3)
+      actionpack (>= 4.2)
+      activesupport (>= 4.2)
+      railties (>= 4.2)
+      rspec-core (~> 3.8)
+      rspec-expectations (~> 3.8)
+      rspec-mocks (~> 3.8)
+      rspec-support (~> 3.8)
     rspec-support (3.9.0)
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
     ruby_dep (1.5.0)
     rubyzip (2.0.0)
     sass-rails (6.0.0)
@@ -234,6 +238,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  auto_strip_attributes
   bootsnap (>= 1.4.2)
   byebug
   capybara
@@ -245,7 +250,8 @@ DEPENDENCIES
   pry-rails
   puma (~> 4.1)
   rails (~> 6.0.1)
-  rspec-rails
+  rspec-rails (~> 4.0.0.beta2)
+  rspec_junit_formatter
   sass-rails (>= 6)
   spring
   spring-watcher-listen (~> 2.0.0)
