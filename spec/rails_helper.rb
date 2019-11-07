@@ -9,7 +9,13 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+# Configure capybara and headless chrome for UI testing in rspec
+require 'capybara/rspec'
+Capybara.server = :puma # Until your setup is working
+Capybara.server = :puma, { Silent: true } # To clean up your test output
+
 require "selenium/webdriver"
+
 Capybara.register_driver :chrome do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome)
 end
