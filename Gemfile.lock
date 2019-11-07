@@ -61,6 +61,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.4.5)
       msgpack (~> 1.0)
+    brakeman (4.7.1)
     builder (3.2.3)
     byebug (11.0.1)
     capybara (3.29.0)
@@ -175,6 +176,8 @@ GEM
       rspec-mocks (~> 3.9.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
     ruby_dep (1.5.0)
     rubyzip (2.0.0)
     sass-rails (6.0.0)
@@ -235,6 +238,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap (>= 1.4.2)
+  brakeman
   byebug
   capybara
   capybara-selenium
@@ -246,6 +250,7 @@ DEPENDENCIES
   puma (~> 4.1)
   rails (~> 6.0.1)
   rspec-rails
+  rspec_junit_formatter
   sass-rails (>= 6)
   spring
   spring-watcher-listen (~> 2.0.0)
