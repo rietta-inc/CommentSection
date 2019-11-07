@@ -1,0 +1,94 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6-node-browsers
+        environment:
+          CI: true
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          - v1-dependencies
+
+      - run:
+          name: Configure Bundler
+          command: |
+            gem install bundler
+
+      - run:
+          name: Install Dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle clean
+            bin/yarn
+
+      - save_cache:
+          paths:
+            - vendor/bundle/
+            - node_modules/
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Setup Project to Run
+          command: bin/setup
+
+      - run:
+          name: Run Tests
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob 'spec/**/*_spec.rb' | circleci tests split --split-by=timings)"
+            bundle exec rspec --format progress \
+                              --format RspecJunitFormatter \
+                              --out /tmp/test-results/rspec.xml \
+                              --format progress \
+              $(sed -e 's/\n/\\n/' -e 's/ /\ /' <<< "${TEST_FILES}")
+
+      - store_test_results:
+          path: /tmp/test-results
+
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+
+      - store_artifacts:
+          path: tmp/capybara
+          destination: capybara-screenshots
+
+  security:
+    docker:
+      - image: circleci/ruby
+        environment:
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install bundler-audit
+          command: gem install bundler-audit
+
+      - run:
+          name: Run bundle-audit
+          command: bundle audit -u
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - security
