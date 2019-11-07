@@ -7,14 +7,4 @@ RSpec.describe "Comments", type: :request do
       expect(response).to have_http_status(200)
     end
   end
-
-  it 'should not show an XSS payload / script tag' do
-    xss_comment = Comment.create(
-      author: "George Burdell",
-      body: "<script>console.log(\"I'm an evil hackerman\");</script>"
-    )
-    get comment_path(xss_comment)
-    expect(response).to have_http_status :ok
-    expect(response.body).to_not include '<script>'
-  end
 end
