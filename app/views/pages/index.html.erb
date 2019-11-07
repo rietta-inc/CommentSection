@@ -1,1 +1,7 @@
 <h1>Welcome to the Comments Section</h1>
+
+<%= form_for '/signup' do |f| %>
+<%= f.label :email, 'E-mail' %>
+<%= f.email_field :email %>
+<%= f.submit 'Subscribe' %>
+<% end %>
