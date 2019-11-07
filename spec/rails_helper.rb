@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -5,7 +7,9 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../config/environment', __dir__)
 
 # Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+if Rails.env.production?
+  abort('The Rails environment is running in production mode!')
+end
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -14,7 +18,7 @@ require 'capybara/rspec'
 Capybara.server = :puma # Until your setup is working
 Capybara.server = :puma, { Silent: true } # To clean up your test output
 
-require "selenium/webdriver"
+require 'selenium/webdriver'
 
 Capybara.register_driver :chrome do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome)
@@ -22,15 +26,13 @@ end
 
 Capybara.register_driver :headless_chrome do |app|
   capabilities = Selenium::WebDriver::Remote::Capabilities.chrome(
-    chromeOptions: { args: %w(headless disable-gpu) }
+    chromeOptions: { args: %w[headless disable-gpu] }
   )
 
   Capybara::Selenium::Driver.new app,
-    browser: :chrome,
-    desired_capabilities: capabilities
+                                 browser: :chrome,
+                                 desired_capabilities: capabilities
 end
-
-
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -83,4 +85,18 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.after(:suite) do
+    example_group = RSpec.describe('Brakeman Issues')
+    example = example_group.example('must have 0 Critical Security Issues') do
+      res = Brakeman.run app_path: Rails.root.to_s, output_files: ['brakeman.html']
+      serious = res.warnings.count { |w| w.confidence == 0 }
+      puts "\n\nBrakeman Result:\n  Critical Security Issues = #{serious}"
+      expect(serious).to eq 0
+    end
+    puts "\nBrakeman Report available here: ./brakeman.html"
+    example_group.run
+    passed = example.execution_result.status == :passed
+    RSpec.configuration.reporter.example_failed example unless passed
+  end
 end
