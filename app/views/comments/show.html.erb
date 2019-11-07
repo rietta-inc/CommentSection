@@ -7,7 +7,7 @@
 
 <p>
   <strong>Body:</strong>
-  <%= sanitize @comment.body %>
+  <%= raw @comment.body %>
 </p>
 
 <%= link_to 'Edit', edit_comment_path(@comment) %> |
